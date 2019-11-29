@@ -1,10 +1,11 @@
-from flask import render_template, redirect, url_for, request
-from Blog import Blog
+from flask import render_template, redirect, url_for, request, flash
+from Blog import Blog, bcrypt
 from Blog.Models import User, Post, db
-
+from Blog.Forms import LoginForm
+from flask_login import login_user, current_user, logout_user
 
 @Blog.route('/')
-def index():
+def home():
     posts = Post.query.all()
     posts.reverse()
     return render_template("home.html", posts=posts)
@@ -43,3 +44,25 @@ def newpost():
     else:
         users = User.query.all()
         return render_template("newpost.html", users=users)
+
+
+@Blog.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+        else:
+            flash("Felaktig inloggning!", "text-error")
+
+    return render_template('login.html', form=form)
+
+@Blog.route('/logout')
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+    return redirect(url_for('login'))
+

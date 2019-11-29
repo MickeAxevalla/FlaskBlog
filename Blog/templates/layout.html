@@ -28,6 +28,11 @@
                 <li><a href="{{ url_for('interests') }}">Interests</a></li>
                 <li><a href="{{ url_for('contact') }}">Contact</a></li>
                 <li><a href="{{ url_for('newpost') }}">Nytt inlägg</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('logout') }}">Logga ut</a></li>
+                {% else %}
+                <li><a href="{{ url_for('login') }}">Logga in</a></li>
+                {% endif %}
             </ul>
         </div><!--/.nav-collapse -->
     </div>
