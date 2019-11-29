@@ -1,0 +1,5 @@
+{% for post in posts %}
+    {{ post['title'] }}<br>
+    {{ post['content'] }}<br>
+    Skrivet av {{ post['author'] }} {{ post['created_at'] }}
+{% endfor %}
